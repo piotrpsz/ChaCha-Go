@@ -1,3 +1,28 @@
+/*
+Package chacha implements ChaCha20 algorithm
+
+MIT License
+
+Copyright (c) 2021 Piotr Pszczółkowski
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package chacha
 
 import (
@@ -40,7 +65,7 @@ func Test_quarterRoundOnState(t *testing.T) {
 		0x53372767, 0xb00a5631, 0x974c541a, 0x359e9963,
 		0x5c971061, 0x3d631689, 0x2098d9d6, 0x91dbd320,
 	}
-	stateExpectedAfter := []uint32 {
+	stateExpectedAfter := []uint32{
 		0x879531e0, 0xc5ecf37d, 0xbdb886dc, 0xc9a62f8a,
 		0x44c20ef3, 0x3390af7f, 0xd9fc690b, 0xcfacafd2,
 		0xe46bea80, 0xb00a5631, 0x974c541a, 0x359e9963,
@@ -56,13 +81,13 @@ func Test_quarterRoundOnState(t *testing.T) {
 }
 
 func Test_initState(t *testing.T) {
-	key := []byte {
+	key := []byte{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 		0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 		0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 	}
-	nonce := []byte {
+	nonce := []byte{
 		0x00, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x4a,
 		0x00, 0x00, 0x00, 0x00,
 	}
@@ -70,7 +95,7 @@ func Test_initState(t *testing.T) {
 
 	cc := New(key, nonce, uint32(0))
 
-	expectedStateWithKeySetup := []uint32 {
+	expectedStateWithKeySetup := []uint32{
 		0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
 		0x03020100, 0x07060504, 0x0b0a0908, 0x0f0e0d0c,
 		0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c,
@@ -82,7 +107,7 @@ func Test_initState(t *testing.T) {
 		return
 	}
 
-	expectedStateAfter20Rounds := []uint32 {
+	expectedStateAfter20Rounds := []uint32{
 		0xe4e7f110, 0x15593bd1, 0x1fdd0f50, 0xc47120a3,
 		0xc7f4d1c7, 0x0368c033, 0x9aaa2204, 0x4e6cd4c3,
 		0x466482d2, 0x09aa9f07, 0x05d7c214, 0xa2028bd9,
@@ -93,7 +118,7 @@ func Test_initState(t *testing.T) {
 		t.Error("invalid state after 20 rounds")
 	}
 
-	expectedSerializedState := []byte {
+	expectedSerializedState := []byte{
 		0x10, 0xf1, 0xe7, 0xe4, 0xd1, 0x3b, 0x59, 0x15,
 		0x50, 0x0f, 0xdd, 0x1f, 0xa3, 0x20, 0x71, 0xc4,
 		0xc7, 0xd1, 0xf4, 0xc7, 0x33, 0xc0, 0x68, 0x03,
@@ -110,13 +135,13 @@ func Test_initState(t *testing.T) {
 }
 
 func Test_Cipher(t *testing.T) {
-	key := []byte {
+	key := []byte{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 		0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 		0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 	}
-	nonce := []byte {
+	nonce := []byte{
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4a,
 		0x00, 0x00, 0x00, 0x00,
 	}
@@ -125,7 +150,7 @@ func Test_Cipher(t *testing.T) {
 	cc := New(key, nonce, blockCounter)
 
 	plainText := "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
-	expectedCipherText := []byte {
+	expectedCipherText := []byte{
 		0x6e, 0x2e, 0x35, 0x9a, 0x25, 0x68, 0xf9, 0x80, 0x41, 0xba, 0x07, 0x28, 0xdd, 0x0d, 0x69, 0x81,
 		0xe9, 0x7e, 0x7a, 0xec, 0x1d, 0x43, 0x60, 0xc2, 0x0a, 0x27, 0xaf, 0xcc, 0xfd, 0x9f, 0xae, 0x0b,
 		0xf9, 0x1b, 0x65, 0xc5, 0x52, 0x47, 0x33, 0xab, 0x8f, 0x59, 0x3d, 0xab, 0xcd, 0x62, 0xb3, 0x57,

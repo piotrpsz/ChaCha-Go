@@ -13,7 +13,7 @@ func main() {
 		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 		0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 	}
-	nonce := []byte {
+	nonce := []byte{
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4a,
 		0x00, 0x00, 0x00, 0x00,
 	}
@@ -21,10 +21,10 @@ func main() {
 
 	text := "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
 
-
 	cc := chacha.New(key, nonce, blockCount)
 	result := cc.Cipher([]byte(text))
 	chacha.PrintBytes(result, 16)
+
 	txt := cc.Cipher(result)
 	fmt.Println()
 	fmt.Printf("|%s|\n", string(txt))
