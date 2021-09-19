@@ -22,7 +22,7 @@ func main() {
 	text := "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
 
 
-	cc := chacha.ChaCha(key, nonce, blockCount)
+	cc := chacha.New(key, nonce, blockCount)
 	result := cc.Cipher([]byte(text))
 	chacha.PrintBytes(result, 16)
 	txt := cc.Cipher(result)

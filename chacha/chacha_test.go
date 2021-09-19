@@ -68,7 +68,7 @@ func Test_initState(t *testing.T) {
 	}
 	blockCount := uint32(1)
 
-	cc := ChaCha(key, nonce, uint32(0))
+	cc := New(key, nonce, uint32(0))
 
 	expectedStateWithKeySetup := []uint32 {
 		0x61707865, 0x3320646e, 0x79622d32, 0x6b206574,
@@ -122,7 +122,7 @@ func Test_Cipher(t *testing.T) {
 	}
 	blockCounter := uint32(1)
 
-	cc := ChaCha(key, nonce, blockCounter)
+	cc := New(key, nonce, blockCounter)
 
 	plainText := "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
 	expectedCipherText := []byte {
