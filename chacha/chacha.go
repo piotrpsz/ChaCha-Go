@@ -186,12 +186,8 @@ func add(a, b []uint32) []uint32 {
 }
 
 func dup(data []uint32) []uint32 {
-	n := len(data)
-	buffer := make([]uint32, n)
+	buffer := make([]uint32, len(data))
 	copy(buffer, data)
-	// for i, v := range data {
-	// 	buffer[i] = v
-	// }
 	return buffer
 }
 
