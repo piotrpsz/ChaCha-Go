@@ -85,6 +85,7 @@ func xor(a, b []byte) []byte {
 	return cipher
 }
 
+// Block rotate passed state
 func (cc *ChaCha) Block(state []uint32) []uint32 {
 	workingState := dup(state)
 
@@ -146,6 +147,7 @@ func updateStateCounter(state []uint32, counter uint32) []uint32 {
 	return state
 }
 
+// InitState creates initial state with passed block count
 func (cc *ChaCha) InitState(blockCount uint32) []uint32 {
 	state := make([]uint32, 16)
 	// add constants
@@ -208,6 +210,7 @@ func bytesToWords(data []byte) []uint32 {
 	return words
 }
 
+// Serialize converts uint32 slice to bytes slice
 func Serialize(data []uint32) []byte {
 	n := len(data)
 	if n == 0 {

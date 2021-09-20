@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// AreWordSlicesEqual checks if two
+// passed uint32 slices are equal
 func AreWordSlicesEqual(a, b []uint32) bool {
 	n := len(a)
 	if n != len(b) {
@@ -22,6 +24,8 @@ func AreWordSlicesEqual(a, b []uint32) bool {
 	return true
 }
 
+// AreByteSlicesEqual checks if two
+// passed byte slices are equal
 func AreByteSlicesEqual(a, b []byte) bool {
 	n := len(a)
 	if n != len(b) {
@@ -39,6 +43,7 @@ func AreByteSlicesEqual(a, b []byte) bool {
 	return true
 }
 
+// PrintWords prints uint32 slice as hex values
 func PrintWords(state []uint32) {
 	for i, v := range state {
 		if i%4 == 0 {
@@ -48,7 +53,7 @@ func PrintWords(state []uint32) {
 	}
 }
 
-// PrintBytes prints formated bytes as hex
+// PrintBytes prints formated bytes as hex values
 func PrintBytes(data []byte, inRow int) {
 	var tokens []string
 
