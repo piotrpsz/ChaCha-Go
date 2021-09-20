@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"ChaCha-Go/chacha"
+	"ChaCha-Go/shared"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 
 	cc := chacha.New(key, nonce, blockCount)
 	result := cc.Cipher([]byte(text))
-	chacha.PrintBytes(result, 16)
+	shared.PrintBytes(result, 16)
 
 	txt := cc.Cipher(result)
 	fmt.Println()

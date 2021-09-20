@@ -27,6 +27,8 @@ package chacha
 
 import (
 	"testing"
+
+	"ChaCha-Go/shared"
 )
 
 func Test_rorl32(t *testing.T) {
@@ -101,8 +103,8 @@ func Test_initState(t *testing.T) {
 		0x13121110, 0x17161514, 0x1b1a1918, 0x1f1e1d1c,
 		0x00000001, 0x09000000, 0x4a000000, 0x00000000,
 	}
-	state := cc.initState(blockCount)
-	if !areWordSlicesEqual(state, expectedStateWithKeySetup) {
+	state := cc.InitState(blockCount)
+	if !shared.AreWordSlicesEqual(state, expectedStateWithKeySetup) {
 		t.Error("invalid state with key setup")
 		return
 	}
@@ -113,8 +115,8 @@ func Test_initState(t *testing.T) {
 		0x466482d2, 0x09aa9f07, 0x05d7c214, 0xa2028bd9,
 		0xd19c12b5, 0xb94e16de, 0xe883d0cb, 0x4e3c50a2,
 	}
-	stateAfter20Rounds := cc.block(state)
-	if !areWordSlicesEqual(stateAfter20Rounds, expectedStateAfter20Rounds) {
+	stateAfter20Rounds := cc.Block(state)
+	if !shared.AreWordSlicesEqual(stateAfter20Rounds, expectedStateAfter20Rounds) {
 		t.Error("invalid state after 20 rounds")
 	}
 
@@ -128,8 +130,8 @@ func Test_initState(t *testing.T) {
 		0xb5, 0x12, 0x9c, 0xd1, 0xde, 0x16, 0x4e, 0xb9,
 		0xcb, 0xd0, 0x83, 0xe8, 0xa2, 0x50, 0x3c, 0x4e,
 	}
-	serializedState := serialize(stateAfter20Rounds)
-	if !areByteSlicesEqual(serializedState, expectedSerializedState) {
+	serializedState := Serialize(stateAfter20Rounds)
+	if !shared.AreByteSlicesEqual(serializedState, expectedSerializedState) {
 		t.Error("something is wrong with serialization")
 	}
 }
@@ -162,7 +164,7 @@ func Test_Cipher(t *testing.T) {
 	}
 
 	cipherText := cc.Cipher([]byte(plainText))
-	if !areByteSlicesEqual(cipherText, expectedCipherText) {
+	if !shared.AreByteSlicesEqual(cipherText, expectedCipherText) {
 		t.Error("plain text -> cipher text failed")
 	}
 

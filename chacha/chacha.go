@@ -25,11 +25,6 @@ SOFTWARE.
 */
 package chacha
 
-import (
-	"fmt"
-	"strings"
-)
-
 // ChaCha cipher object declaration
 type ChaCha struct {
 	key        []uint32 // A 256-bit key, 8 x uint32, 32 x byte
@@ -38,7 +33,7 @@ type ChaCha struct {
 }
 
 // New creates new cipher object
-func New(key []byte, nonce []byte, blockCount uint32) *ChaCha {
+func New(key, nonce []byte, blockCount uint32) *ChaCha {
 	return &ChaCha{
 		key:        bytesToWords(key),
 		nonce:      bytesToWords(nonce),
@@ -58,10 +53,10 @@ func (cc *ChaCha) Cipher(text []byte) []byte {
 		blockIndex   uint32
 		byteIndex    uint32
 	)
-	state := cc.initState(0)
+	state := cc.InitState(0)
 	for blockIndex < blocksNumber {
 		block := updateStateCounter(state, blockIndex+cc.blockCount)
-		keyStream := serialize(cc.block(block))
+		keyStream := Serialize(cc.Block(block))
 		plainText := text[byteIndex : byteIndex+64]
 		cipher := xor(plainText, keyStream)
 		cipherBuffer = append(cipherBuffer, cipher...)
@@ -70,7 +65,7 @@ func (cc *ChaCha) Cipher(text []byte) []byte {
 	}
 	if n%BlockSize != 0 {
 		block := updateStateCounter(state, blockIndex+cc.blockCount)
-		keyStream := serialize(cc.block(block))
+		keyStream := Serialize(cc.Block(block))
 		plainText := text[byteIndex:]
 		cipher := xor(plainText, keyStream)
 		cipherBuffer = append(cipherBuffer, cipher...)
@@ -90,7 +85,7 @@ func xor(a, b []byte) []byte {
 	return cipher
 }
 
-func (cc *ChaCha) block(state []uint32) []uint32 {
+func (cc *ChaCha) Block(state []uint32) []uint32 {
 	workingState := dup(state)
 
 	for i := 0; i < 10; i++ {
@@ -151,7 +146,7 @@ func updateStateCounter(state []uint32, counter uint32) []uint32 {
 	return state
 }
 
-func (cc *ChaCha) initState(blockCount uint32) []uint32 {
+func (cc *ChaCha) InitState(blockCount uint32) []uint32 {
 	state := make([]uint32, 16)
 	// add constants
 	state[0] = 0x61707865
@@ -213,7 +208,7 @@ func bytesToWords(data []byte) []uint32 {
 	return words
 }
 
-func serialize(data []uint32) []byte {
+func Serialize(data []uint32) []byte {
 	n := len(data)
 	if n == 0 {
 		return nil
@@ -237,61 +232,4 @@ func word2bytes(w uint32) []byte {
 	out[1] = byte((w >> 8) & 0xff)
 	out[0] = byte(w & 0xff)
 	return out
-}
-
-func areWordSlicesEqual(a, b []uint32) bool {
-	n := len(a)
-	if n != len(b) {
-		return false
-	}
-	if n == 0 {
-		return true
-	}
-
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-	return true
-}
-
-func areByteSlicesEqual(a, b []byte) bool {
-	n := len(a)
-	if n != len(b) {
-		return false
-	}
-	if n == 0 {
-		return true
-	}
-
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-	return true
-}
-
-func (cc *ChaCha) printWords(state []uint32) {
-	for i, v := range state {
-		if i%4 == 0 {
-			fmt.Printf("\n")
-		}
-		fmt.Printf("%08x ", v)
-	}
-}
-
-// PrintBytes prints formated bytes as hex
-func PrintBytes(data []byte, inRow int) {
-	var tokens []string
-
-	for i, v := range data {
-		if i != 0 && i%inRow == 0 {
-			tokens = append(tokens, fmt.Sprintf("\n0x%02x", v))
-		} else {
-			tokens = append(tokens, fmt.Sprintf("0x%02x", v))
-		}
-	}
-	fmt.Println(strings.Join(tokens, ", "))
 }
