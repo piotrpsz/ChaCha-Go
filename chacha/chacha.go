@@ -25,6 +25,8 @@ SOFTWARE.
 */
 package chacha
 
+const BlockSize int = 64 // in bytes
+
 // ChaCha cipher object declaration
 type ChaCha struct {
 	key        []uint32 // A 256-bit key, 8 x uint32, 32 x byte

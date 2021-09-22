@@ -30,4 +30,11 @@ func main() {
 	fmt.Println()
 	fmt.Printf("|%s|\n", string(txt))
 	fmt.Println()
+
+	result = cc.CipherAsync([]byte(text))
+	shared.PrintBytes(result, 16)
+	txt = cc.CipherAsync(result)
+	fmt.Println()
+	fmt.Printf("|%s|\n", string(txt))
+	fmt.Println()
 }
