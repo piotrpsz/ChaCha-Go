@@ -1,14 +1,30 @@
 package chacha
 
+import (
+	"sync"
+)
+
 type cipherData struct {
 	index int
 	data  []byte
+}
+
+func newEmptyCipherData() interface{} {
+	return &cipherData{}
 }
 
 func newCipherData(index int, data []byte) *cipherData {
 	return &cipherData{
 		index: index,
 		data:  data,
+	}
+}
+
+var pool *sync.Pool = &sync.Pool{New: newEmptyCipherData}
+
+func init() {
+	for i := 0; i < 10; i++ {
+		pool.Put(pool.New)
 	}
 }
 
@@ -23,7 +39,7 @@ func (cc *ChaCha) CipherAsync(text []byte) []byte {
 	}
 
 	cipherBuffer := make([]byte, nbytes)
-	dataChan := make(chan *cipherData, goroutinesNumber)
+	dataChan := make(chan interface{}, goroutinesNumber)
 	defer close(dataChan)
 
 	var (
@@ -46,7 +62,9 @@ func (cc *ChaCha) CipherAsync(text []byte) []byte {
 
 	for i := 0; i < goroutinesNumber; i++ {
 		result := <-dataChan
-		copy(cipherBuffer[result.index:result.index+len(result.data)], result.data)
+		data := result.(*cipherData)
+		copy(cipherBuffer[data.index:data.index+len(data.data)], data.data)
+		pool.Put(result)
 	}
 
 	return cipherBuffer
@@ -57,10 +75,14 @@ func (cc *ChaCha) cipherBlock(
 	counter uint32,
 	text []byte,
 	index int,
-	dataChan chan<- *cipherData,
+	dataChan chan<- interface{},
 ) {
 	block := updateStateCounter(state, counter)
 	keyStream := Serialize(cc.Block(block))
 	cipher := xor(text, keyStream)
-	dataChan <- newCipherData(index, cipher)
+	data := *pool.Get().(*cipherData)
+
+	data.index = index
+	data.data = cipher
+	dataChan <- data
 }
