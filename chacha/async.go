@@ -4,29 +4,22 @@ import (
 	"sync"
 )
 
-type CipherData struct {
+type cipherData struct {
 	index int
 	data  []byte
 }
 
 func newEmptyCipherData() interface{} {
-	return new(CipherData)
-}
-
-func newCipherData(index int, data []byte) *CipherData {
-	return &CipherData{
-		index: index,
-		data:  data,
-	}
+	return new(cipherData)
 }
 
 var cipherDataPool sync.Pool = sync.Pool{New: newEmptyCipherData}
 
-// func init() {
-// 	for i := 0; i < 10; i++ {
-// 		cipherDataPool.Put(cipherDataPool.New)
-// 	}
-// }
+func init() {
+	for i := 0; i < 10; i++ {
+		cipherDataPool.Put(newEmptyCipherData())
+	}
+}
 
 // CipherAsync encryption/decryption using goroutines
 func (cc *ChaCha) CipherAsync(text []byte) []byte {
@@ -62,8 +55,8 @@ func (cc *ChaCha) CipherAsync(text []byte) []byte {
 
 	for i := 0; i < goroutinesNumber; i++ {
 		result := <-dataChan
-		data := result.(*CipherData)
-		copy(cipherBuffer[data.index:data.index+len(data.data)], data.data)
+		cd := result.(*cipherData)
+		copy(cipherBuffer[cd.index:cd.index+len(cd.data)], cd.data)
 		cipherDataPool.Put(result)
 	}
 
@@ -81,7 +74,7 @@ func (cc *ChaCha) cipherBlock(
 	keyStream := Serialize(cc.Block(block))
 	cipher := xor(text, keyStream)
 
-	cd := cipherDataPool.Get().(*CipherData)
+	cd := cipherDataPool.Get().(*cipherData)
 	cd.index = index
 	cd.data = cipher
 
