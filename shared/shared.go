@@ -66,3 +66,12 @@ func PrintBytes(data []byte, inRow int) {
 	}
 	fmt.Println(strings.Join(tokens, ", "))
 }
+
+func PrintInfo(title string, a, b []byte) {
+	fmt.Println()
+	fmt.Println("[source text]", title)
+	PrintBytes(a, 16)
+	fmt.Println("[cipher result]")
+	PrintBytes(b, 16)
+	fmt.Println()
+}

@@ -58,7 +58,7 @@ func (cc *ChaCha) Cipher(text []byte) []byte {
 	state := cc.InitState(0)
 	for blockIndex < blocksNumber {
 		block := updateStateCounter(state, blockIndex+cc.blockCount)
-		keyStream := Serialize(cc.Block(block))
+		keyStream := Serialize(Block(block))
 		plainText := text[byteIndex : byteIndex+64]
 		cipher := xor(plainText, keyStream)
 		cipherBuffer = append(cipherBuffer, cipher...)
@@ -67,7 +67,7 @@ func (cc *ChaCha) Cipher(text []byte) []byte {
 	}
 	if n%BlockSize != 0 {
 		block := updateStateCounter(state, blockIndex+cc.blockCount)
-		keyStream := Serialize(cc.Block(block))
+		keyStream := Serialize(Block(block))
 		plainText := text[byteIndex:]
 		cipher := xor(plainText, keyStream)
 		cipherBuffer = append(cipherBuffer, cipher...)
@@ -88,7 +88,7 @@ func xor(a, b []byte) []byte {
 }
 
 // Block rotate passed state
-func (cc *ChaCha) Block(state []uint32) []uint32 {
+func Block(state []uint32) []uint32 {
 	workingState := dup(state)
 
 	for i := 0; i < 10; i++ {
