@@ -66,17 +66,15 @@ func (cc *ChaCha) CipherAsync(text []byte) []byte {
 	)
 	for blockIndex < blocksNumber {
 		count := uint32(blockIndex) + cc.blockCount
-		state := cc.InitState(count)
 		processedText := text[byteIndex : byteIndex+64]
-		go cc.cipherBlock(state, count, processedText, byteIndex, dataChan)
+		go cc.cipherBlock(count, processedText, byteIndex, dataChan)
 		blockIndex++
 		byteIndex += 64
 	}
 	if extraBlock {
 		count := uint32(blockIndex) + cc.blockCount
-		state := cc.InitState(count)
 		processedText := text[byteIndex:]
-		go cc.cipherBlock(state, count, processedText, byteIndex, dataChan)
+		go cc.cipherBlock(count, processedText, byteIndex, dataChan)
 	}
 
 	for i := 0; i < goroutinesNumber; i++ {
@@ -89,17 +87,14 @@ func (cc *ChaCha) CipherAsync(text []byte) []byte {
 	return cipherBuffer
 }
 
-var counter int
-
 func (cc *ChaCha) cipherBlock(
-	state []uint32,
 	counter uint32,
 	text []byte,
 	index int,
 	dataChan chan<- interface{},
 ) {
-	block := updateStateCounter(state, counter)
-	keyStream := Serialize(Block(block))
+	state := cc.InitState(counter)
+	keyStream := Serialize(Block(state))
 
 	cd := cipherDataPool.Get().(*CipherData)
 	cd.index = index

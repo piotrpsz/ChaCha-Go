@@ -174,7 +174,8 @@ func Test_Cipher(t *testing.T) {
 	}
 }
 
-
+// Test_SyncAsync checks if sync and async versions
+// produces the same output
 func Test_SyncAsync(t *testing.T) {
 	key := []byte{
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -192,14 +193,12 @@ func Test_SyncAsync(t *testing.T) {
 	cc2 := New(key, nonce, blockCounter)
 
 	plainText := "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
-	// plainText += "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
+	plainText += "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
+	plainText += "Ladies and Gentlemen of the class of '99: If I could offer you only one tip for the future, sunscreen would be it."
 
 	sc := cc1.Cipher([]byte(plainText))
 	ac := cc2.CipherAsync([]byte(plainText))
 	if !shared.AreByteSlicesEqual(sc, ac) {
-		// shared.PrintBytes(sc, 16)
-		// fmt.Println()
-		// shared.PrintBytes(ac, 16)
 		t.Error("encrypted data are not equal")
 	}
 
